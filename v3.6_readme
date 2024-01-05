@@ -1,0 +1,46 @@
+This code can be used to read endpoint readouts (e.g. OD600, fluorescence, ...) that are presented in a 384-well format.
+This readme-file will help you to understand how this code works and what it expects as input.
+
+0. Prepare data-files and metadata-file
+
+Trim and export your raw data files into .csv files. (the code can use both ";" and "," as delimiters)
+
+	Here is an example of how a data-file.csv could look like:
+#########################################	
+#	,1,2,..,23,24			#
+#	A,0.917,0.964,...,0.753,0.813	#
+#	B,0.191,0.143,...,0.108,0.144	#
+#	...				#
+#	O,0.876,0.922,...,0.665,0.725	#
+#	P,0.157,0.133,...,0.111,0.147	#
+#########################################
+
+Next, create a metadata.csv file that describes your plate-layout:
+You can simply prepare a table in excel or numbers and export it to .csv. The code was written to interpret growth inhibition data for HTS condition screens. Thus, it expects a metadata file that contains a condition and a strain like "condition, strain", separated by a ',' and embraced by "" in each cell/well (e.g. "DMSO, E. Coli wt", "abx, MRSA", or simply "condition a, condition b")
+
+	Here is an example of how a metadata.csv could look like:
+#########################################################################	
+#	,1,2,...,23,24							#
+# A,"DMSO, EC wt","DMSO, EC wt",...,"DMSO, EC perm","DMSO, EC perm"	#
+# B,"abx, EC wt","abx, EC wt",...,"abx, EC perm","abx, EC perm"		#
+# ...									#
+# O,"DMSO, EC wt","DMSO, EC wt",...,"DMSO, EC perm","DMSO, EC perm"	#
+# P,"abx, EC wt","abx, EC wt",...,"abx, EC perm","abx, EC perm"		#
+#########################################################################
+
+Dont worry about delimiters, he code can use both ";" and ",".
+
+1. Hit "Run All Cells" and a input window should pop up in the background (you might need to look for it in your Dock)
+
+2. Select the folder that contains your input .csv files
+
+3. Hit "Enter" and the script will run
+
+4. The script prepares an output-folder named "Output" within the selected input-folder where it stores the generated graphs and files
+
+Output:
+- a bar graph (*_bar-graph.png) that shows the average and standard deviation of each condition, e.g. DMSO + E. coli wt or abx + DMSO E. coli wt. Additionally, the bar graph is merged with a scatter plot that shows all individual data points and marks wells at the outer rim of the 384-well plate (i.e. row 1 & 24, col A % P) red to get a hint on edge effects (e.g. all dots at the higher end are red or whatever). Please note that the scatter plot can sometimes not show all datapoints. This is usually the case when the data is very homogeneous and the bar is not wide enough to cover all dots. You will get an error-message in the notebook, but the code will run just fine. The code detects which conditions belong together, based on strain (condition b) and will label the graphs with the respective z'-facors (see below)
+- a color-coded heatmap (*_heat-map.png) to get a global overview of the data understand edge effects
+- a summary table of the data (*_grouped-data.csv), containing averaged values, standard deviation and z-factors
+- a reorganised datafile (*_merged_data.csv) that merged metadata with raw-data. This file makes it easy to copy-paste your data to GraphPad prism for Publication Quality figures
+- a readme file that contains information on where the data was stored and which version of the code was used.
